@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Chess Opening Quiz</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        /* CHESS BOARD */
+        .chessboard {
+            width: min(90vw, 500px);
+            height: min(90vw, 500px);
+
+            margin: 20px auto;
+
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+
+            border: 3px solid #222;
+        }
+
+        /* EACH SQUARE */
+        .square {
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-size: clamp(25px, 8vw, 55px);
+            line-height: 1;
+        }
+
+        .light {
+            background-color: #f0d9b5;
+        }
+
+        .dark {
+            background-color: #b58863;
+        }
+
+        .piece {
+            line-height: 1;
+            user-select: none;
+        }
+
+        /* MOVES */
+        .moves {
+            margin: 15px auto;
+            max-width: 500px;
+            color: #444;
+        }
+
+        /* ANSWERS */
+        .answers {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+
+            width: min(90vw, 500px);
+            margin: 20px auto;
+        }
+
+        .answer-button {
+            padding: 14px 10px;
+            border: none;
+            border-radius: 8px;
+
+            background: #333;
+            color: white;
+
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .answer-button:hover {
+            background: #555;
+        }
+
+        /* RESULT */
+        .result {
+            width: min(90vw, 500px);
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 8px;
+
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .correct {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .wrong {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* NEXT BUTTON */
+        .next-button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 12px 20px;
+
+            background: #222;
+            color: white;
+
+            text-decoration: none;
+            border-radius: 8px;
+        }
+
+        /* MOBILE */
+        @media (max-width: 600px) {
+
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .answers {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>♟ Chess Opening Quiz</h1>
+
+    <div class="subtitle">
+        Can you identify the opening?
+    </div>
+
+
+    <!-- CHESS BOARD -->
+
+    <div class="chessboard">
+
+        {% for row in quiz.board %}
+
+            {% for square in row %}
+
+                <div class="square {% if square.light %}light{% else %}dark{% endif %}">
+
+                    {% if square.piece %}
+
+                        <span class="piece">
+
+                            {% if square.piece == "P" %}♙
+                            {% elif square.piece == "N" %}♘
+                            {% elif square.piece == "B" %}♗
+                            {% elif square.piece == "R" %}♖
+                            {% elif square.piece == "Q" %}♕
+                            {% elif square.piece == "K" %}♔
+
+                            {% elif square.piece == "p" %}♟
+                            {% elif square.piece == "n" %}♞
+                            {% elif square.piece == "b" %}♝
+                            {% elif square.piece == "r" %}♜
+                            {% elif square.piece == "q" %}♛
+                            {% elif square.piece == "k" %}♚
+
+                            {% endif %}
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- MOVES -->
+
+    <div class="moves">
+
+        <strong>Moves:</strong>
+
+        {{ quiz.moves }}
+
+    </div>
+
+
+    <!-- ANSWERS -->
+
+    {% if not result %}
+
+        <form method="POST">
+
+            <input
+                type="hidden"
+                name="correct_answer"
+                value="{{ quiz.opening }}"
+            >
+
+            <div class="answers">
+
+                {% for choice in quiz.choices %}
+
+                    <button
+                        type="submit"
+                        name="answer"
+                        value="{{ choice }}"
+                        class="answer-button"
+                    >
+                        {{ choice }}
+                    </button>
+
+                {% endfor %}
+
+            </div>
+
+        </form>
+
+    {% endif %}
+
+
+    <!-- RESULT -->
+
+    {% if result %}
+
+        {% if result == "correct" %}
+
+            <div class="result correct">
+
+                ✅ Correct!
+
+                <br><br>
+
+                The opening is:
+
+                <strong>{{ quiz.opening }}</strong>
+
+            </div>
+
+        {% else %}
+
+            <div class="result wrong">
+
+                ❌ Wrong!
+
+                <br><br>
+
+                The correct answer is:
+
+                <strong>{{ quiz.opening }}</strong>
+
+            </div>
+
+        {% endif %}
+
+
+        <a href="/" class="next-button">
+            Next Question →
+        </a>
+
+    {% endif %}
+
+</body>
+</html>
